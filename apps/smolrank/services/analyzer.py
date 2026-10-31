@@ -6,10 +6,8 @@ from django.conf import settings
 from .client import SmolRankClient
 from .exceptions import APIError
 
-# Keys the API payload might use; adjust here once the real response shape is confirmed.
-RESULT_LIST_KEYS = ("results", "videos", "items", "data")
-CHANNEL_NAME_KEYS = ("channel_name", "channelTitle", "channel", "author")
-SUBSCRIBER_KEYS = ("subscribers", "subscriber_count", "subscriberCount", "channel_subscribers")
+# Field names in the SmolRank API response.
+RESULT_LIST_KEY = "results"
 
 
 @dataclass
@@ -18,6 +16,12 @@ class ChannelResult:
     channel: str
     subscribers: int | None
     is_small: bool
+    video_title: str = ""
+    published_date: str = ""
+    is_outdated: bool = False
+    view_count: int | None = None
+    reach_multiplier: float | None = None
+    is_outlier: bool = False
 
 
 @dataclass
@@ -25,6 +29,8 @@ class WinnabilityReport:
     keyword: str
     threshold: int
     channels: list[ChannelResult] = field(default_factory=list)
+    freshness_opportunity: bool = False
+    suggestions: list = field(default_factory=list)
 
     @property
     def small_channels(self):
@@ -35,13 +41,6 @@ class WinnabilityReport:
         return bool(self.small_channels)
 
 
-def _first(item, keys, default=None):
-    for key in keys:
-        if item.get(key) is not None:
-            return item[key]
-    return default
-
-
 def _to_int(value):
     try:
         return int(str(value).replace(",", "").strip())
@@ -50,27 +49,36 @@ def _to_int(value):
 
 
 def extract_results(payload):
-    if isinstance(payload, list):
-        return payload
-    if isinstance(payload, dict):
-        for key in RESULT_LIST_KEYS:
-            if isinstance(payload.get(key), list):
-                return payload[key]
-    raise APIError("Unexpected SmolRank API response shape.")
+    results = payload.get(RESULT_LIST_KEY) if isinstance(payload, dict) else None
+    if not isinstance(results, list):
+        raise APIError("Unexpected SmolRank API response shape.")
+    return results
 
 
 def build_report(keyword, payload, threshold=None, top_n=None):
+    """Build a report. Winnability uses OUR threshold setting, not the API's."""
     threshold = settings.SMOLRANK_SUBSCRIBER_THRESHOLD if threshold is None else threshold
     top_n = settings.SMOLRANK_TOP_N if top_n is None else top_n
-    report = WinnabilityReport(keyword=keyword, threshold=threshold)
-    for rank, item in enumerate(extract_results(payload)[:top_n], start=1):
-        subs = _to_int(_first(item, SUBSCRIBER_KEYS))
+    report = WinnabilityReport(
+        keyword=keyword,
+        threshold=threshold,
+        freshness_opportunity=bool(payload.get("freshness_opportunity")),
+        suggestions=payload.get("suggestions") or [],
+    )
+    for position, item in enumerate(extract_results(payload)[:top_n], start=1):
+        subs = _to_int(item.get("subscriber_count"))
         report.channels.append(
             ChannelResult(
-                rank=rank,
-                channel=str(_first(item, CHANNEL_NAME_KEYS, "Unknown")),
+                rank=item.get("rank") or position,
+                channel=str(item.get("channel_title") or "Unknown"),
                 subscribers=subs,
                 is_small=subs is not None and subs < threshold,
+                video_title=item.get("video_title") or "",
+                published_date=item.get("published_date") or "",
+                is_outdated=bool(item.get("is_outdated")),
+                view_count=_to_int(item.get("view_count")),
+                reach_multiplier=item.get("reach_multiplier"),
+                is_outlier=bool(item.get("is_outlier")),
             )
         )
     return report

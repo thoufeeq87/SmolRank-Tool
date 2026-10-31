@@ -14,12 +14,26 @@
       "{{ report.keyword }}"
     </h2>
     <p>{{ report.small_channels|length }} of the top {{ report.channels|length }} channels have under {{ report.threshold }} subscribers.</p>
+    {% if report.freshness_opportunity %}<p>Freshness opportunity: top results are outdated.</p>{% endif %}
     <table border="1" cellpadding="6">
-      <tr><th>#</th><th>Channel</th><th>Subscribers</th><th>Small?</th></tr>
+      <tr><th>#</th><th>Video</th><th>Channel</th><th>Subscribers</th><th>Small?</th><th>Published</th><th>Views</th><th>Reach&times;</th></tr>
       {% for c in report.channels %}
-      <tr><td>{{ c.rank }}</td><td>{{ c.channel }}</td><td>{{ c.subscribers|default_if_none:"?" }}</td><td>{{ c.is_small|yesno:"Yes,No" }}</td></tr>
+      <tr>
+        <td>{{ c.rank }}</td>
+        <td>{{ c.video_title }}</td>
+        <td>{{ c.channel }}</td>
+        <td>{{ c.subscribers|default_if_none:"?" }}</td>
+        <td>{{ c.is_small|yesno:"Yes,No" }}</td>
+        <td>{{ c.published_date }}{% if c.is_outdated %} (outdated){% endif %}</td>
+        <td>{{ c.view_count|default_if_none:"?" }}</td>
+        <td>{{ c.reach_multiplier|default_if_none:"" }}{% if c.is_outlier %} (outlier){% endif %}</td>
+      </tr>
       {% endfor %}
     </table>
+    {% if report.suggestions %}
+      <h3>Longer-tail suggestions</h3>
+      <ul>{% for s in report.suggestions %}<li>{{ s }}</li>{% endfor %}</ul>
+    {% endif %}
   {% endif %}
 </body>
 </html>
