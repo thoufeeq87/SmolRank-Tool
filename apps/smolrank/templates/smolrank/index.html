@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>SmolRank</title></head>
+<body>
+  <h1>SmolRank</h1>
+  <p>Is there room for a small channel to rank for your keyword?</p>
+  <form method="get">{{ form.as_p }}<button type="submit">Check</button></form>
+
+  {% if error %}<p style="color:#b00">{{ error }}</p>{% endif %}
+
+  {% if report %}
+    <h2>
+      {% if report.winnable %}Winnable{% else %}Tough{% endif %}:
+      "{{ report.keyword }}"
+    </h2>
+    <p>{{ report.small_channels|length }} of the top {{ report.channels|length }} channels have under {{ report.threshold }} subscribers.</p>
+    <table border="1" cellpadding="6">
+      <tr><th>#</th><th>Channel</th><th>Subscribers</th><th>Small?</th></tr>
+      {% for c in report.channels %}
+      <tr><td>{{ c.rank }}</td><td>{{ c.channel }}</td><td>{{ c.subscribers|default_if_none:"?" }}</td><td>{{ c.is_small|yesno:"Yes,No" }}</td></tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+</body>
+</html>
