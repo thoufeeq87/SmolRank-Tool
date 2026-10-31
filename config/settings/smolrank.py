@@ -10,6 +10,6 @@ SMOLRANK_TOP_N = int(os.environ.get("SMOLRANK_TOP_N", 10))
 
 # RapidAPI connection. The key must come from the environment, never from source control.
 SMOLRANK_RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY", "")
-SMOLRANK_RAPIDAPI_HOST = os.environ.get("SMOLRANK_RAPIDAPI_HOST", "smolrank.p.rapidapi.com")
-SMOLRANK_API_URL = os.environ.get("SMOLRANK_API_URL", f"https://{SMOLRANK_RAPIDAPI_HOST}/search")
+SMOLRANK_RAPIDAPI_HOST = os.environ.get("SMOLRANK_RAPIDAPI_HOST", "smolrank1.p.rapidapi.com")
+SMOLRANK_API_URL = os.environ.get("SMOLRANK_API_URL", f"https://{SMOLRANK_RAPIDAPI_HOST}/api/v1/check")
 SMOLRANK_API_TIMEOUT = int(os.environ.get("SMOLRANK_API_TIMEOUT", 15))
