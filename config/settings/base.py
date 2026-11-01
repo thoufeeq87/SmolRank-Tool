@@ -57,17 +57,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-        # IMMEDIATE: concurrent writers wait for the lock instead of failing mid-transaction
-        "OPTIONS": {"transaction_mode": "IMMEDIATE", "timeout": 20},
-        # file-based test DB so multi-threaded tests share it reliably
-        "TEST": {"NAME": BASE_DIR / "test_db.sqlite3"},
-    }
-}
-
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 
 LANGUAGE_CODE = "en-us"
@@ -85,6 +74,7 @@ from .smolrank import *  # noqa: E402,F401,F403
 from .accounts import *  # noqa: E402,F401,F403
 from .billing import *  # noqa: E402,F401,F403
 from .security import *  # noqa: E402,F401,F403
+from .database import *  # noqa: E402,F401,F403
 
 LOGGING = {
     "version": 1,

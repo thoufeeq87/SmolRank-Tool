@@ -3,6 +3,7 @@ import os
 from django.core.exceptions import ImproperlyConfigured
 
 from .base import *  # noqa: F401,F403
+from .database import build_databases
 
 
 def _flag(name, default):
@@ -10,6 +11,9 @@ def _flag(name, default):
 
 
 DEBUG = False
+
+# PostgreSQL only: raises ImproperlyConfigured if DATABASE_URL is missing.
+DATABASES = build_databases(require_url=True)
 EMAIL_BACKEND = "apps.accounts.email_backends.resend.ResendEmailBackend"
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h.strip()]
 

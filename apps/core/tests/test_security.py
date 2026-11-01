@@ -7,11 +7,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.test import Client, SimpleTestCase, TestCase
 
 GOOD_KEY = "k" * 64
+PG_URL = "postgresql://user:pw@db.example.com:5432/app"
 
 
 def load_prod(env):
     """Import config.settings.prod fresh under a controlled environment."""
     sys.modules.pop("config.settings.prod", None)
+    env = {"DATABASE_URL": PG_URL, **env}  # prod requires a database URL; tests of other settings get one
     with patch.dict(os.environ, env, clear=False):
         for name in ("DJANGO_SECRET_KEY", "DJANGO_BEHIND_PROXY"):
             if name not in env:
