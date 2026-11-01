@@ -1,0 +1,33 @@
+# Files Docker should NOT copy into the image. Smaller image, faster builds, and no secrets inside it.
+
+# --- Secrets: never put these in an image (anyone who gets the image could read them) ---
+.env
+.env.*
+!.env.example
+
+# --- Local-only things that are rebuilt inside the image ---
+venv/
+.venv/
+__pycache__/
+*.pyc
+staticfiles/
+
+# --- Local databases and test output ---
+db.sqlite3
+test_db.sqlite3
+*.sqlite3
+results.html
+smolrank_*.html
+
+# --- Git, editor and tooling folders ---
+.git/
+.gitignore
+.claude/
+.vscode/
+.idea/
+
+# --- Docker files themselves and docs (not needed at runtime) ---
+Dockerfile
+docker-compose*.yml
+.dockerignore
+*.md

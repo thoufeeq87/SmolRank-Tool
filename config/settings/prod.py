@@ -25,6 +25,13 @@ if len(SECRET_KEY) < 50 or SECRET_KEY.startswith("django-insecure"):
         'python -c "import secrets; print(secrets.token_urlsafe(64))"'
     )
 
+# Static files: WhiteNoise serves what collectstatic gathered, compressed and with hashed file
+# names (so browsers cache them safely and re-download only when they change).
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+
 # HTTPS-only cookies and redirects. Behind a TLS-terminating proxy (Railway, Render, nginx...)
 # also set DJANGO_BEHIND_PROXY=True, otherwise the HTTPS redirect loops. Only enable that when
 # the proxy really overwrites X-Forwarded-Proto, because clients could otherwise spoof it.

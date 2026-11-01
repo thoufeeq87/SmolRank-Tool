@@ -1,0 +1,76 @@
+# docker-compose runs several containers together. Here: the Django app ("web") + PostgreSQL ("db").
+#
+# FIRST TIME SETUP
+#   1. Copy .env.example to .env and fill in your keys (RAPIDAPI_KEY, POLAR_*, RESEND_API_KEY, ...).
+#   2. In .env set DJANGO_SECRET_KEY to a long random value (50+ characters). Make one with:
+#        python -c "import secrets; print(secrets.token_urlsafe(64))"
+#   3. Start everything:      docker compose up --build
+#   4. Open the app:          http://localhost:8000
+#   5. Create your admin:     docker compose exec web python manage.py create_admin you@example.com
+#   Stop with Ctrl+C, or `docker compose down` (your database is kept; add -v to also delete it).
+
+services:
+  # ───────────── The PostgreSQL database ─────────────
+  db:
+    image: postgres:17-alpine          # official image; "alpine" = small
+    restart: unless-stopped            # start again after a crash or reboot
+    environment:
+      # These create the database and user the first time the container starts.
+      POSTGRES_DB: ${POSTGRES_DB:-smolrank}
+      POSTGRES_USER: ${POSTGRES_USER:-smolrank}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-only}
+    volumes:
+      # A named volume keeps your data when the container is removed or rebuilt.
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # "web" waits until this succeeds, so the app never starts before the database is ready.
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # No "ports:" on purpose. The database is only reachable by the other containers, not from the internet.
+
+  # ───────────── The Django app (built from the Dockerfile) ─────────────
+  web:
+    build: .                           # build the image from ./Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy     # wait for the database healthcheck above
+    ports:
+      - "8000:8000"                    # "your PC's port : container's port"
+    # Load all your settings and API keys from the .env file. It is read when the container STARTS,
+    # so the secrets are never baked into the image.
+    env_file:
+      - .env
+    # Values below override anything with the same name in .env, so a .env made for local
+    # development (e.g. a Railway DATABASE_URL) can't point this container at the wrong place.
+    environment:
+      # Connect to the "db" container above (Docker's network lets containers reach each other by service name).
+      DATABASE_URL: postgresql://${POSTGRES_USER:-smolrank}:${POSTGRES_PASSWORD:-change-me-local-only}@db:5432/${POSTGRES_DB:-smolrank}
+      # Fails fast with a clear message if you forgot to set a real key.
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Set DJANGO_SECRET_KEY in .env (50+ random characters)}
+      # Hosts Django will answer to. For a real deployment add your domain, e.g. localhost,example.com
+      DJANGO_ALLOWED_HOSTS: ${COMPOSE_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      # Production settings force HTTPS. Plain http://localhost can't do that, so these are switched off for
+      # local use. On a real server behind HTTPS, remove these three lines.
+      DJANGO_SSL_REDIRECT: "False"
+      DJANGO_SECURE_COOKIES: "False"
+      DJANGO_HSTS_SECONDS: "0"
+      # Where links in emails and Polar redirects point. Use your real domain when deployed.
+      SITE_URL: ${COMPOSE_SITE_URL:-http://localhost:8000}
+    # Create/update the database tables, then start Gunicorn (the Dockerfile's default command).
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers $${GUNICORN_WORKERS:-3} --access-logfile -"
+    healthcheck:
+      # Docker marks the container "healthy" once the home page answers.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+# Named volumes are managed by Docker and survive `docker compose down`.
+volumes:
+  pgdata:
