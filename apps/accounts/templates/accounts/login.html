@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block title %}Log in - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-surface border-3 border-ink shadow-brutal-secondary p-6 sm:p-10 max-w-xl mx-auto">
+  <h1 class="font-heading font-bold text-3xl">Log in</h1>
+  <p class="mt-2">Enter your email and we'll send you a sign-in link. No password needed. New here? We'll create your account.</p>
+
+  <form id="login-form" method="post" class="mt-6" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <label for="{{ form.email.id_for_label }}" class="font-heading font-bold block mb-2">Email</label>
+    <input type="email" name="email" id="{{ form.email.id_for_label }}" required autocomplete="email" autofocus
+           maxlength="254" value="{{ form.email.value|default_if_none:'' }}" placeholder="you@example.com"
+           aria-describedby="email-error"
+           class="w-full border-3 border-ink bg-canvas px-4 py-3 text-lg focus:outline-none focus:bg-primary {% if form.email.errors %}border-accent bg-accent/30{% endif %}">
+    <p id="email-error" role="alert" aria-live="polite"
+       class="mt-2 text-sm font-bold {% if form.email.errors %}bg-accent border-3 border-ink px-2 py-1{% endif %}">{% for e in form.email.errors %}{{ e }}{% endfor %}</p>
+
+    <button type="submit" id="submit-btn"
+            class="mt-6 w-full font-heading font-bold text-lg border-3 border-ink bg-primary px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all disabled:opacity-70 disabled:cursor-wait disabled:translate-x-0 disabled:translate-y-0">
+      <span id="btn-label">Email me a sign-in link</span>
+      <span id="btn-loading" class="hidden"><span class="inline-block w-4 h-4 border-3 border-ink border-t-transparent animate-spin align-middle mr-2"></span>Sending...</span>
+    </button>
+  </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    var form = document.getElementById('login-form');
+    var btn = document.getElementById('submit-btn');
+    function setLoading(on) {
+      btn.disabled = on;
+      document.getElementById('btn-label').classList.toggle('hidden', on);
+      document.getElementById('btn-loading').classList.toggle('hidden', !on);
+    }
+    form.addEventListener('submit', function (e) {
+      if (!form.elements.email.value.trim()) { return; }  // let the server show the inline error
+      setLoading(true);
+    });
+    window.addEventListener('pageshow', function () { setLoading(false); });
+  })();
+</script>
+{% endblock %}

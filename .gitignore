@@ -1,0 +1,10 @@
+venv/
+.env
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+test_db.sqlite3
+results.html
+smolrank_*.html
+*.sqlite3

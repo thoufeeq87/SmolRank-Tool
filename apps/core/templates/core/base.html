@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {% include "core/components/_head.html" %}
+  <title>{% block title %}SmolRank - Can a small channel rank?{% endblock %}</title>
+  {% block head %}{% endblock %}
+</head>
+<body class="bg-canvas text-ink font-body min-h-screen flex flex-col">
+  {% include "core/components/_navbar.html" %}
+  <main class="flex-1 w-full max-w-5xl mx-auto px-4 py-8 sm:py-12">
+    {% block content %}{% endblock %}
+  </main>
+  {% include "core/components/_footer.html" %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>

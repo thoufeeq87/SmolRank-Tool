@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}Buy tokens - SmolRank{% endblock %}
+{% block content %}
+<h1 class="font-heading font-bold text-3xl">Buy tokens</h1>
+<p class="mt-2 font-medium">Your balance: <strong class="font-heading">{{ balance|intcomma }}</strong> tokens. Each keyword check costs 30 tokens.</p>
+
+{% if error %}
+<section class="mt-6 bg-surface border-3 border-ink shadow-brutal-accent p-5" role="alert">
+  <p class="font-heading font-bold text-xl">Something went wrong</p>
+  <p class="mt-1">{{ error }}</p>
+</section>
+{% endif %}
+
+{% if packages %}
+<ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {% for p in packages %}
+  <li class="border-3 border-ink shadow-brutal p-6 flex flex-col {% cycle 'bg-primary' 'bg-secondary' 'bg-accent' %}">
+    <h2 class="font-heading font-bold text-xl">{{ p.name }}</h2>
+    <p class="font-heading font-bold text-5xl mt-4 leading-none">{{ p.token_amount|intcomma }}</p>
+    <p class="font-medium">tokens</p>
+    <p class="mt-4 font-heading text-2xl">${{ p.price }}</p>
+    <form method="post" action="{% url 'billing:checkout' p.pk %}" class="mt-6 mt-auto pt-6">
+      {% csrf_token %}
+      <button type="submit" class="w-full font-heading font-bold text-lg border-3 border-ink bg-surface px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">Buy now</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+<p class="mt-6 text-sm">You'll pay on Polar's secure checkout. Tokens are added as soon as the payment is confirmed.</p>
+{% else %}
+<section class="mt-8 bg-surface border-3 border-ink shadow-brutal p-6 text-center">
+  <p class="font-heading font-bold text-xl">No packages available right now</p>
+  <p class="mt-2">Please check back soon.</p>
+</section>
+{% endif %}
+{% endblock %}

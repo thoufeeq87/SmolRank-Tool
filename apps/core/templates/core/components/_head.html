@@ -1,0 +1,35 @@
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        borderRadius: { none: '0px', DEFAULT: '0px', sm: '0px', md: '0px', lg: '0px', xl: '0px', '2xl': '0px', '3xl': '0px', full: '0px' },
+        borderWidth: { DEFAULT: '3px', 0: '0px', 2: '2px', 3: '3px', 4: '4px', 8: '8px' },
+        extend: {
+          colors: {
+            primary: '#fde047',
+            secondary: '#a3e635',
+            accent: '#fb923c',
+            canvas: '#fef3c7',
+            surface: '#ffffff',
+            ink: '#1c1917',
+          },
+          fontFamily: {
+            heading: ['"Space Mono"', 'monospace'],
+            body: ['Inter', 'sans-serif'],
+          },
+          boxShadow: {
+            brutal: '5px 5px 0 0 #1c1917',
+            'brutal-sm': '3px 3px 0 0 #1c1917',
+            'brutal-primary': '5px 5px 0 0 #fde047',
+            'brutal-secondary': '5px 5px 0 0 #a3e635',
+            'brutal-accent': '5px 5px 0 0 #fb923c',
+          },
+        },
+      },
+    }
+  </script>

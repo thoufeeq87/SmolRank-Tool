@@ -1,0 +1,17 @@
+{% if result.suggestions %}
+<section class="mt-10">
+  <h2 class="font-heading font-bold text-2xl mb-4">Longer-tail keyword ideas</h2>
+  <ul class="flex flex-wrap gap-3">
+    {% for s in result.suggestions %}
+    <li>
+      {% if static_report %}
+        <span class="inline-block bg-surface border-3 border-ink shadow-brutal-sm px-3 py-2 font-medium">{{ s }}</span>
+      {% else %}
+        <a href="{% url 'winnability:results' %}?keyword={{ s|urlencode }}"
+           class="inline-block bg-surface border-3 border-ink shadow-brutal-sm px-3 py-2 font-medium hover:bg-primary">{{ s }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}

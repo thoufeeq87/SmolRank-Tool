@@ -1,0 +1,9 @@
+{% load humanize %}
+<section class="border-3 border-ink shadow-brutal p-6 sm:p-10 {% if result.winnable %}bg-secondary{% else %}bg-accent{% endif %}">
+  <p class="font-heading font-bold text-5xl sm:text-7xl uppercase" data-testid="verdict">
+    {% if result.winnable %}Winnable{% else %}Tough{% endif %}
+  </p>
+  <p class="mt-4 text-lg sm:text-xl font-medium">
+    {{ result.small_channels|length }} of the top {{ result.total }} channels have under {{ result.threshold|intcomma }} subscribers
+  </p>
+</section>

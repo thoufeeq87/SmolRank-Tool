@@ -1,0 +1,21 @@
+<header class="bg-primary border-b-3 border-ink">
+  <nav class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="{% if static_report %}#{% else %}{% url 'winnability:landing' %}{% endif %}" class="font-heading font-bold text-2xl tracking-tight">SmolRank</a>
+    {% if not static_report %}
+    <div class="flex items-center gap-3">
+      {% if user.is_authenticated %}
+      <a href="{% url 'winnability:analyze' %}" class="font-heading font-bold border-3 border-ink bg-surface px-4 py-1.5 shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">Analyze</a>
+      <a href="{% url 'tokens:index' %}" class="font-heading font-bold border-3 border-ink bg-primary px-4 py-1.5 shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">Tokens</a>
+      <a href="{% url 'billing:packages' %}" class="font-heading font-bold border-3 border-ink bg-secondary px-4 py-1.5 shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">Buy tokens</a>
+      <span class="hidden sm:inline font-heading text-sm truncate max-w-[12rem]">{{ user.email }}</span>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="font-heading font-bold border-3 border-ink bg-accent px-4 py-1.5 shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">Log out</button>
+      </form>
+      {% else %}
+      <a href="{% url 'accounts:login' %}" class="font-heading font-bold border-3 border-ink bg-secondary px-4 py-1.5 shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">Log in</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </nav>
+</header>

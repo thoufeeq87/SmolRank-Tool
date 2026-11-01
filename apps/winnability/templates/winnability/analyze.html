@@ -1,0 +1,77 @@
+{% extends "core/base.html" %}
+{% block title %}Analyze a keyword - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-surface border-3 border-ink shadow-brutal-secondary p-6 sm:p-10 max-w-2xl mx-auto">
+  <h1 class="font-heading font-bold text-3xl">Analyze a keyword</h1>
+  <p class="mt-2">Enter the phrase you want to rank for.</p>
+  <p class="mt-4 font-heading text-sm border-3 border-ink px-3 py-2 {% if can_afford %}bg-secondary{% else %}bg-accent{% endif %}">
+    Each check costs {{ cost }} tokens. Your balance: <strong>{{ balance }}</strong>.
+    {% if not can_afford %}You need more tokens to run a check.{% endif %}
+  </p>
+
+  <form id="analyze-form" method="get" action="{% url 'winnability:results' %}" class="mt-6" novalidate>
+    <label for="{{ form.keyword.id_for_label }}" class="font-heading font-bold block mb-2">Keyword</label>
+    <input type="text" name="keyword" id="{{ form.keyword.id_for_label }}"
+           maxlength="100" required autocomplete="off" autofocus
+           value="{{ form.keyword.value|default_if_none:'' }}"
+           placeholder="e.g. best microphone for youtube beginners"
+           aria-describedby="keyword-error keyword-count"
+           class="w-full border-3 border-ink bg-canvas px-4 py-3 text-lg focus:outline-none focus:bg-primary {% if form.keyword.errors %}border-accent bg-accent/30{% endif %}">
+    <div class="flex justify-between mt-2 text-sm">
+      <p id="keyword-error" role="alert" aria-live="polite"
+         class="font-bold {% if form.keyword.errors %}bg-accent border-3 border-ink px-2 py-1{% endif %}">
+        {% for e in form.keyword.errors %}{{ e }}{% endfor %}
+      </p>
+      <p id="keyword-count" class="font-heading ml-auto"><span id="char-count">0</span>/100</p>
+    </div>
+
+    <button type="submit" id="submit-btn"
+            class="mt-6 w-full font-heading font-bold text-lg border-3 border-ink bg-primary px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all disabled:opacity-70 disabled:cursor-wait disabled:translate-x-0 disabled:translate-y-0">
+      <span id="btn-label">Check keyword</span>
+      <span id="btn-loading" class="hidden">
+        <span class="inline-block w-4 h-4 border-3 border-ink border-t-transparent animate-spin align-middle mr-2"></span>Checking the top 10...
+      </span>
+    </button>
+  </form>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var form = document.getElementById('analyze-form');
+    var input = form.elements.keyword;
+    var btn = document.getElementById('submit-btn');
+    var label = document.getElementById('btn-label');
+    var loading = document.getElementById('btn-loading');
+    var count = document.getElementById('char-count');
+    var error = document.getElementById('keyword-error');
+
+    function updateCount() { count.textContent = input.value.length; }
+    function setLoading(on) {
+      btn.disabled = on;
+      label.classList.toggle('hidden', on);
+      loading.classList.toggle('hidden', !on);
+    }
+
+    input.addEventListener('input', updateCount);
+    updateCount();
+
+    form.addEventListener('submit', function (e) {
+      var value = input.value.trim();
+      if (!value) {
+        e.preventDefault();
+        error.textContent = 'Enter a keyword to check.';
+        error.className = 'font-bold bg-accent border-3 border-ink px-2 py-1';
+        input.focus();
+        return;
+      }
+      input.value = value;
+      setLoading(true);
+    });
+
+    // restore the button if the user comes back via the browser back button
+    window.addEventListener('pageshow', function () { setLoading(false); });
+  })();
+</script>
+{% endblock %}

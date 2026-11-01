@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+{% block content %}
+<section class="bg-surface border-3 border-ink shadow-brutal-accent p-6 sm:p-12">
+  <p class="font-heading font-bold inline-block bg-secondary border-3 border-ink px-3 py-1 mb-6">YouTube keyword checker</p>
+  <h1 class="font-heading font-bold text-3xl sm:text-5xl leading-tight">Can a small channel rank for this keyword?</h1>
+  <p class="mt-6 text-lg sm:text-xl max-w-2xl">
+    Type a keyword. We look at the top 10 YouTube videos and tell you if any of them
+    come from a small channel. If one does, you have a real shot.
+  </p>
+  <div class="mt-8">
+    {% url 'winnability:analyze' as analyze_url %}
+    {% include "core/components/_button.html" with href=analyze_url label="Check a keyword" variant="primary" %}
+  </div>
+</section>
+
+<section class="mt-12">
+  <h2 class="font-heading font-bold text-2xl sm:text-3xl mb-6">How it works</h2>
+  <ol class="grid gap-6 sm:grid-cols-3">
+    <li class="bg-primary border-3 border-ink shadow-brutal p-5">
+      <span class="font-heading font-bold text-4xl">1</span>
+      <h3 class="font-heading font-bold text-xl mt-2">Enter a keyword</h3>
+      <p class="mt-2">Pick a topic or phrase you want to make a video about.</p>
+    </li>
+    <li class="bg-secondary border-3 border-ink shadow-brutal p-5">
+      <span class="font-heading font-bold text-4xl">2</span>
+      <h3 class="font-heading font-bold text-xl mt-2">We check the top 10</h3>
+      <p class="mt-2">We count how many subscribers each ranking channel has.</p>
+    </li>
+    <li class="bg-accent border-3 border-ink shadow-brutal p-5">
+      <span class="font-heading font-bold text-4xl">3</span>
+      <h3 class="font-heading font-bold text-xl mt-2">Get your verdict</h3>
+      <p class="mt-2">Winnable or tough, plus the numbers behind it.</p>
+    </li>
+  </ol>
+</section>
+
+<section class="mt-12 bg-surface border-3 border-ink shadow-brutal p-6 text-center">
+  <p class="font-heading font-bold text-xl sm:text-2xl mb-4">Ready to find a keyword you can win?</p>
+  {% include "core/components/_button.html" with href=analyze_url label="Go to the analyzer" variant="secondary" %}
+</section>
+{% endblock %}

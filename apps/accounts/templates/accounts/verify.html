@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% block title %}Confirm sign in - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-primary border-3 border-ink shadow-brutal-accent p-6 sm:p-10 max-w-xl mx-auto text-center">
+  <h1 class="font-heading font-bold text-3xl">Confirm sign in</h1>
+  <p class="mt-4 text-lg">Click the button to finish signing in to SmolRank.</p>
+  <form method="post" class="mt-8">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="font-heading font-bold text-lg border-3 border-ink bg-secondary px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">Sign me in</button>
+  </form>
+</section>
+{% endblock %}

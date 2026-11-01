@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+{% block title %}Checkout cancelled - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-surface border-3 border-ink shadow-brutal-accent p-6 sm:p-10 max-w-xl mx-auto text-center">
+  <h1 class="font-heading font-bold text-3xl">Checkout cancelled</h1>
+  <p class="mt-4 text-lg">No payment was taken and your balance hasn't changed.</p>
+  <div class="mt-8">
+    {% url 'billing:packages' as packages_url %}
+    {% include "core/components/_button.html" with href=packages_url label="Back to packages" variant="primary" %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+{% block title %}Link expired - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-surface border-3 border-ink shadow-brutal-accent p-6 sm:p-10 max-w-xl mx-auto text-center" role="alert">
+  <h1 class="font-heading font-bold text-3xl">This link doesn't work</h1>
+  <p class="mt-4 text-lg">It may have expired (links last 15 minutes) or already been used. Request a new one.</p>
+  <div class="mt-8">
+    {% url 'accounts:login' as login_url %}
+    {% include "core/components/_button.html" with href=login_url label="Get a new link" variant="primary" %}
+  </div>
+</section>
+{% endblock %}

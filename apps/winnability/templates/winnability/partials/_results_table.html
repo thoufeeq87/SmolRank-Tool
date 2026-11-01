@@ -1,0 +1,44 @@
+{% load humanize %}
+<section class="mt-10">
+  <h2 class="font-heading font-bold text-2xl mb-4">Top {{ result.total }} videos</h2>
+  <div class="overflow-x-auto border-3 border-ink shadow-brutal bg-surface">
+    <table class="w-full text-left text-sm sm:text-base">
+      <thead class="bg-primary border-b-3 border-ink font-heading">
+        <tr>
+          <th class="p-3">Rank</th>
+          <th class="p-3">Video</th>
+          <th class="p-3">Channel</th>
+          <th class="p-3">Subscribers</th>
+          <th class="p-3">Small?</th>
+          <th class="p-3">Published</th>
+          <th class="p-3">Views</th>
+          <th class="p-3">Reach</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in result.results %}
+        <tr class="border-b-2 border-ink last:border-b-0 {% if r.is_small %}bg-secondary/40{% endif %}">
+          <td class="p-3 font-heading font-bold">{{ r.rank }}</td>
+          <td class="p-3 min-w-[14rem]">{{ r.video_title }}</td>
+          <td class="p-3">{{ r.channel_title }}</td>
+          <td class="p-3 font-heading">{{ r.subscriber_count|intcomma }}</td>
+          <td class="p-3">
+            {% if r.is_small %}<span class="inline-block bg-secondary border-3 border-ink px-2 font-heading font-bold text-xs">SMALL</span>{% else %}<span class="text-stone-500">No</span>{% endif %}
+          </td>
+          <td class="p-3 whitespace-nowrap">
+            {{ r.published_date }}
+            {% if r.is_outdated %}<span class="inline-block bg-accent border-3 border-ink px-2 font-heading font-bold text-xs">OUTDATED</span>{% endif %}
+          </td>
+          <td class="p-3 font-heading">{{ r.view_count|intcomma }}</td>
+          <td class="p-3 whitespace-nowrap font-heading">
+            {{ r.reach_multiplier|floatformat:"-2" }}x
+            {% if r.is_outlier %}<span class="inline-block bg-primary border-3 border-ink px-2 font-bold text-xs">OUTLIER</span>{% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="p-6 text-center">No results returned for this keyword.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>

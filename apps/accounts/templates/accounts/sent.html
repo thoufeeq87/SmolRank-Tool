@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+{% block title %}Check your email - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-secondary border-3 border-ink shadow-brutal p-6 sm:p-10 max-w-xl mx-auto text-center">
+  <h1 class="font-heading font-bold text-3xl">Check your email</h1>
+  <p class="mt-4 text-lg">
+    {% if email %}If <strong class="break-all">{{ email }}</strong> can receive mail, a sign-in link is on its way.{% else %}A sign-in link is on its way.{% endif %}
+    It works once and expires in 15 minutes.
+  </p>
+  {% if console_email %}<p class="mt-4 font-heading text-sm bg-surface border-3 border-ink p-2">Dev mode: the email is printed in the terminal running the server.</p>{% endif %}
+  <div class="mt-8">
+    {% url 'accounts:login' as login_url %}
+    {% include "core/components/_button.html" with href=login_url label="Use a different email" variant="surface" %}
+  </div>
+</section>
+{% endblock %}

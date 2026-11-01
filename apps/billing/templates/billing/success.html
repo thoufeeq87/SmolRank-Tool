@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}Payment received - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-secondary border-3 border-ink shadow-brutal p-6 sm:p-10 max-w-xl mx-auto text-center">
+  <h1 class="font-heading font-bold text-3xl">Thank you!</h1>
+  <p class="mt-4 text-lg">Your payment is being confirmed. Your tokens are added as soon as it is, usually within a few seconds.</p>
+  <p class="mt-4 font-heading">Current balance: <strong>{{ balance|intcomma }}</strong> tokens</p>
+  <p class="mt-1 text-sm">Not updated yet? Refresh this page in a moment.</p>
+  <div class="mt-8 flex flex-wrap justify-center gap-4">
+    {% url 'tokens:index' as tokens_url %}
+    {% url 'winnability:analyze' as analyze_url %}
+    {% include "core/components/_button.html" with href=tokens_url label="View my tokens" variant="surface" %}
+    {% include "core/components/_button.html" with href=analyze_url label="Analyze a keyword" variant="primary" %}
+  </div>
+</section>
+{% endblock %}

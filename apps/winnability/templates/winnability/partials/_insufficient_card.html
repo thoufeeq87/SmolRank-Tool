@@ -1,0 +1,11 @@
+{% load humanize %}
+<section class="bg-surface border-3 border-ink shadow-brutal-accent p-6 sm:p-8" role="alert">
+  <p class="font-heading font-bold text-2xl">Not enough tokens</p>
+  <p class="mt-3 text-lg">A keyword check costs {{ cost|intcomma }} tokens and your balance is {{ insufficient.balance|intcomma }}. You weren't charged.</p>
+  <div class="mt-6 flex flex-wrap gap-4">
+    {% url 'tokens:index' as tokens_url %}
+    {% url 'billing:packages' as buy_url %}
+    {% include "core/components/_button.html" with href=buy_url label="Buy tokens" variant="primary" %}
+    {% include "core/components/_button.html" with href=tokens_url label="View my tokens" variant="surface" %}
+  </div>
+</section>

@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block title %}Page not found - SmolRank{% endblock %}
+{% block content %}
+<section class="bg-primary border-3 border-ink shadow-brutal-accent p-6 sm:p-12 text-center">
+  <p class="font-heading font-bold text-7xl sm:text-9xl leading-none">404</p>
+  <h1 class="font-heading font-bold text-2xl sm:text-4xl mt-6">Page not found</h1>
+  <p class="mt-4 text-lg max-w-xl mx-auto">That page doesn't exist or has moved. Let's get you back to checking keywords.</p>
+  <div class="mt-8 flex flex-wrap justify-center gap-4">
+    {% url 'winnability:landing' as home_url %}
+    {% url 'winnability:analyze' as analyze_url %}
+    {% include "core/components/_button.html" with href=home_url label="Back to home" variant="surface" %}
+    {% include "core/components/_button.html" with href=analyze_url label="Analyze a keyword" variant="secondary" %}
+  </div>
+</section>
+{% endblock %}

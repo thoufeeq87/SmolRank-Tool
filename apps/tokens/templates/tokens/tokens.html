@@ -1,0 +1,68 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}My tokens - SmolRank{% endblock %}
+{% block content %}
+<h1 class="font-heading font-bold text-3xl mb-6">My tokens</h1>
+
+<section class="bg-primary border-3 border-ink shadow-brutal-accent p-6 sm:p-10">
+  <p class="font-heading text-sm uppercase">Current balance</p>
+  <p class="font-heading font-bold text-6xl sm:text-8xl leading-none mt-2" data-testid="balance">{{ balance|intcomma }}</p>
+  <p class="mt-2 font-medium">token{{ balance|pluralize }}</p>
+  <a href="{% url 'billing:packages' %}" class="mt-6 inline-block font-heading font-bold border-3 border-ink bg-surface px-5 py-2 shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">Buy tokens</a>
+</section>
+
+<section class="mt-10">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+    <h2 class="font-heading font-bold text-2xl">Transaction history</h2>
+    <nav class="flex gap-2" aria-label="Filter transactions">
+      {% for value, label in filters %}
+      <a href="?kind={{ value }}" aria-current="{% if kind == value %}true{% else %}false{% endif %}"
+         class="font-heading font-bold text-sm border-3 border-ink px-3 py-1 shadow-brutal-sm {% if kind == value %}bg-ink text-surface{% else %}bg-surface hover:bg-primary{% endif %}">{{ label }}</a>
+      {% endfor %}
+    </nav>
+  </div>
+
+  {% if page.object_list %}
+  <div class="overflow-x-auto border-3 border-ink shadow-brutal bg-surface">
+    <table class="w-full text-left text-sm sm:text-base">
+      <thead class="bg-primary border-b-3 border-ink font-heading">
+        <tr>
+          <th class="p-3">Date</th>
+          <th class="p-3">Type</th>
+          <th class="p-3 text-right">Amount</th>
+          <th class="p-3 text-right">Balance after</th>
+          <th class="p-3">Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in page %}
+        <tr class="border-b-2 border-ink last:border-b-0">
+          <td class="p-3 whitespace-nowrap">{{ t.created_at|date:"M j, Y H:i" }}</td>
+          <td class="p-3">
+            {% if t.kind == "credit" %}<span class="inline-block bg-secondary border-3 border-ink px-2 font-heading font-bold text-xs">CREDIT</span>
+            {% else %}<span class="inline-block bg-accent border-3 border-ink px-2 font-heading font-bold text-xs">DEBIT</span>{% endif %}
+          </td>
+          <td class="p-3 text-right font-heading font-bold whitespace-nowrap">{% if t.amount > 0 %}+{% endif %}{{ t.amount|intcomma }}</td>
+          <td class="p-3 text-right font-heading">{{ t.balance_after|intcomma }}</td>
+          <td class="p-3">{{ t.reason|default:"-" }}{% if t.reference %} <span class="text-stone-600 text-xs break-all">({{ t.reference }})</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page.has_other_pages %}
+  <div class="mt-6 flex items-center justify-between font-heading">
+    {% if page.has_previous %}<a href="?{% if kind %}kind={{ kind }}&{% endif %}page={{ page.previous_page_number }}" class="border-3 border-ink bg-surface px-4 py-2 shadow-brutal-sm hover:bg-primary">&larr; Newer</a>{% else %}<span></span>{% endif %}
+    <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a href="?{% if kind %}kind={{ kind }}&{% endif %}page={{ page.next_page_number }}" class="border-3 border-ink bg-surface px-4 py-2 shadow-brutal-sm hover:bg-primary">Older &rarr;</a>{% else %}<span></span>{% endif %}
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="bg-surface border-3 border-ink shadow-brutal p-6 text-center">
+    <p class="font-heading font-bold text-xl">No transactions yet</p>
+    <p class="mt-2">{% if kind %}Nothing matches this filter.{% else %}Your token activity will show up here.{% endif %}</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

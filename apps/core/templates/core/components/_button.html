@@ -1,0 +1,2 @@
+{# params: href, label, variant (primary|secondary|accent|surface, default primary) #}
+<a href="{{ href }}" class="inline-block font-heading font-bold text-lg border-3 border-ink px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all {% if variant == 'secondary' %}bg-secondary{% elif variant == 'accent' %}bg-accent{% elif variant == 'surface' %}bg-surface{% else %}bg-primary{% endif %}">{{ label }}</a>
