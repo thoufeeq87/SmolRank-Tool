@@ -12,6 +12,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 
+from apps.tokens.api import add_tokens
+
 from ..models import MagicLink, User
 
 logger = logging.getLogger(__name__)
@@ -110,4 +112,22 @@ def consume_token(token):
         if spent != 1:
             return None
         user = MagicLink.objects.select_related("user").get(token_hash=token_hash).user
-    return user if user.is_active else None
+    if not user.is_active:
+        return None
+    grant_signup_bonus(user)
+    return user
+
+
+def grant_signup_bonus(user):
+    """Give the welcome tokens once per user. The idempotency key makes repeats and races harmless."""
+    amount = settings.SIGNUP_BONUS_TOKENS
+    if amount <= 0:
+        return
+    try:
+        add_tokens(
+            user, amount, reason="Welcome bonus", reference="signup-bonus",
+            idempotency_key=f"signup-bonus-{user.pk}",
+        )
+    except Exception:
+        # Never block sign-in over this; the next sign-in retries safely.
+        logger.exception("Could not grant the welcome bonus to user %s", user.pk)

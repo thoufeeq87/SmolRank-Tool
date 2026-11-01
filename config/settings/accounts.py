@@ -13,6 +13,9 @@ MAGIC_LINK_EXPIRY_MINUTES = int(os.environ.get("MAGIC_LINK_EXPIRY_MINUTES", 15))
 # Max links emailed to one address per hour.
 MAGIC_LINK_MAX_PER_HOUR = int(os.environ.get("MAGIC_LINK_MAX_PER_HOUR", 5))
 
+# Free tokens given once to each user the first time they sign in with a magic link. 0 turns it off.
+SIGNUP_BONUS_TOKENS = int(os.environ.get("SIGNUP_BONUS_TOKENS", 300))
+
 # Base URL used to build absolute links inside emails.
 SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
 
