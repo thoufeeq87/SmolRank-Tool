@@ -20,8 +20,14 @@ ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").s
 # Never run production on the public fallback key: sessions and CSRF tokens would be forgeable.
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
 if len(SECRET_KEY) < 50 or SECRET_KEY.startswith("django-insecure"):
+    _problem = (
+        "is not set" if not SECRET_KEY
+        else "starts with 'django-insecure' (the public development key)" if SECRET_KEY.startswith("django-insecure")
+        else f"is only {len(SECRET_KEY)} characters long"
+    )
     raise ImproperlyConfigured(
-        "Set DJANGO_SECRET_KEY to a unique random value of at least 50 characters. Generate one with: "
+        f"DJANGO_SECRET_KEY {_problem}. Set it to a unique random value of at least 50 characters in this "
+        "service's environment variables, then redeploy. Generate one with: "
         'python -c "import secrets; print(secrets.token_urlsafe(64))"'
     )
 
