@@ -75,6 +75,7 @@ from .accounts import *  # noqa: E402,F401,F403
 from .billing import *  # noqa: E402,F401,F403
 from .security import *  # noqa: E402,F401,F403
 from .database import *  # noqa: E402,F401,F403
+from .prefix import *  # noqa: E402,F401,F403
 
 LOGGING = {
     "version": 1,

@@ -16,6 +16,10 @@ DEBUG = False
 DATABASES = build_databases(require_url=True)
 EMAIL_BACKEND = "apps.accounts.email_backends.resend.ResendEmailBackend"
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h.strip()]
+# Public origins that may POST forms, e.g. https://thoufai.com when the app is served under thoufai.com/smolrank.
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
+# Set True when a proxy forwards the public host in X-Forwarded-Host (only if it overwrites that header).
+USE_X_FORWARDED_HOST = _flag("DJANGO_USE_X_FORWARDED_HOST", False)
 
 # Never run production on the public fallback key: sessions and CSRF tokens would be forgeable.
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")

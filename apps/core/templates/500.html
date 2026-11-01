@@ -11,7 +11,7 @@
     <h1 class="font-heading font-bold text-2xl sm:text-4xl mt-6">Something broke on our end</h1>
     <p class="mt-4 text-lg">It's not you. We hit an unexpected error. Please try again in a moment.</p>
     <div class="mt-8 flex flex-wrap justify-center gap-4">
-      <a href="/" class="inline-block font-heading font-bold text-lg border-3 border-ink bg-surface px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">Back to home</a>
+      <a href="{% url 'winnability:landing' %}" class="inline-block font-heading font-bold text-lg border-3 border-ink bg-surface px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">Back to home</a>
       <a href="javascript:location.reload()" class="inline-block font-heading font-bold text-lg border-3 border-ink bg-primary px-6 py-3 shadow-brutal hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none transition-all">Try again</a>
     </div>
   </section>
